@@ -20,9 +20,21 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
-  // find one category by its `id` value
-  // be sure to include its associated Products
+// GET method for a sepcific category id
+router.get("/:id", async (req, res) => {
+  try {
+    // Fetch category by id along with its associated products
+    const categoryData = await Category.findByPk(req.params.id, {
+      include: [{ model: Product }], // Include the Product model to fetch associated products
+    });
+    // Send the fetched category data as a JSON response with a 200 status code
+    res.status(200).json(categoryData);
+  } catch (err) {
+    // Handle any errors that occur during the fetching process
+    console.error(err);
+    // Send a 500 Internal Server Error response along with the error message
+    res.status(500).send(err);
+  }
 });
 
 router.post("/", (req, res) => {
