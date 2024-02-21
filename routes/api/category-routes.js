@@ -56,8 +56,32 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
-  // update a category by its `id` value
+// PUT method to update a specific category id
+router.put("/:id", async (req, res) => {
+  try {
+    // Find the category by id
+    const category = await Category.findByPk(req.params.id);
+
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Update the category with the provided data
+    await category.update(req.body);
+
+    // Fetch the updated category along with its associated products
+    const updatedCategory = await Category.findByPk(req.params.id, {
+      include: [{ model: Product }],
+    });
+
+    // Send the fetched category data as a JSON response with a 200 status code
+    res.status(200).json(updatedCategory);
+  } catch (err) {
+    // Handle any errors that occur during the updating process
+    console.error(err);
+    // Send a 500 Internal Server Error response along with the error message
+    res.status(500).send(err);
+  }
 });
 
 router.delete("/:id", (req, res) => {
