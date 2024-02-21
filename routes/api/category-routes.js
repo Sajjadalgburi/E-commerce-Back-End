@@ -84,8 +84,27 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
-  // delete a category by its `id` value
+// DELETE method to delete a specific category id from database
+router.delete("/:id", async (req, res) => {
+  try {
+    // Delete the category with the provided id from the database
+    const categoryData = await Category.destroy({
+      where: {
+        id: req.params.id,
+      },
+      // Force delete will permanently remove the category and its associated products
+      force: true,
+      // Include the Product model to fetch associated products before deletion
+      include: [{ model: Product }],
+    });
+    // Send a 200 OK response along with the deleted category data
+    res.status(200).json(categoryData);
+  } catch (err) {
+    // Handle any errors that occur during the deletion process
+    console.error(err);
+    // Send a 500 Internal Server Error response along with the error message
+    res.status(500).send(err);
+  }
 });
 
 module.exports = router;
