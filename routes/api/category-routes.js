@@ -37,8 +37,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
-  // create a new category
+// POST method to post a specific category name which will be grabbed from the request body
+router.post("/", async (req, res) => {
+  try {
+    // Attempt to create a new category using data from the request body
+    const categoryData = await Category.create({
+      category_name: req.body.category_name, // Extract category name from request body
+    });
+
+    // If category creation is successful, respond with status 200 and the created category data
+    res.status(200).json(categoryData);
+  } catch (err) {
+    // If an error occurs during category creation or database operation
+    console.error(err); // Log the error to the console for debugging purposes
+
+    // Send a 500 Internal Server Error response along with the error message
+    res.status(500).send(err);
+  }
 });
 
 router.put("/:id", (req, res) => {
