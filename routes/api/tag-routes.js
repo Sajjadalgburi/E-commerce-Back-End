@@ -70,8 +70,24 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
-  // update a tag's name by its `id` value
+// Handle PUT request to update a tag by ID
+router.put("/:id", async (req, res) => {
+  try {
+    // Attempt to update the tag using the provided data from the request body
+    const tagData = await Tag.update(req.body, {
+      where: { id: req.params.id }, // Filter tags by ID
+    });
+
+    // If successful, send a 200 OK response with the updated tag data in JSON format
+    res.status(200).json({
+      message: `Tag updated successfully where tag ID is ${req.params.id}`,
+    });
+  } catch (err) {
+    // If an error occurs during the database query, log the error to the console for debugging
+    console.error(err);
+    // Send a 500 Internal Server Error response along with the error message to indicate a server-side issue
+    res.status(500).send(err);
+  }
 });
 
 router.delete("/:id", (req, res) => {
