@@ -50,12 +50,24 @@ router.get("/:id", async (req, res) => {
     // Send a 500 Internal Server Error response along with the error message
     res.status(500).send(err);
   }
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
 });
 
-router.post("/", (req, res) => {
-  // create a new tag
+// Define a POST route for handling incoming requests to create a new tag
+router.post("/", async (req, res) => {
+  try {
+    // Attempt to create a new tag using the provided tag_name from the request body
+    const tagData = await Tag.create({
+      where: { tag_name: req.body.tag_name }, // Define the tag_name based on the request body
+    });
+
+    // If successful, send a 200 OK response with the created tag data in JSON format
+    res.status(200).json({ message: "Tag created successfully", tagData });
+  } catch (err) {
+    // If an error occurs during the database query, log the error to the console for debugging purposes
+    console.error(err);
+    // Send a 500 Internal Server Error response along with the error message to indicate server-side issue
+    res.status(500).send(err);
+  }
 });
 
 router.put("/:id", (req, res) => {
