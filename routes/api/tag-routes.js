@@ -38,20 +38,6 @@ router.get("/:id", async (req, res) => {
   // This route handler finds a single tag by its `id` including associated Product data
 });
 
-router.get("/:id", async (req, res) => {
-  try {
-    const tagData = await Tag.findByPk(req.params.id, {
-      include: [{ model: Product }],
-    });
-    res.status(200).json(tagData);
-  } catch (err) {
-    // If an error occurs during the database query, log the error to the console
-    console.error(err);
-    // Send a 500 Internal Server Error response along with the error message
-    res.status(500).send(err);
-  }
-});
-
 // Define a POST route for handling incoming requests to create a new tag
 router.post("/", async (req, res) => {
   try {
