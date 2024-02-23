@@ -90,8 +90,29 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
-  // delete on tag by its `id` value
+// Define endpoint to handle deletion of a tag by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    // Attempt to delete a tag with the provided ID
+    const tagData = await Tag.destroy({
+      where: { id: req.params.id }, // Specify the ID of the tag to be deleted
+
+      // Force delete will permanently remove the category and its associated products
+      force: true,
+      include: [{ model: Product }], // Include associated products for deletion
+    });
+
+    // If deletion is successful, send a 200 OK response with a success message
+    res.status(200).json({
+      message: `Tag deleted successfully where tag ID is ${req.params.id}`,
+      tagData,
+    });
+  } catch (err) {
+    // If an error occurs during the database operation, log the error
+    console.error(err);
+    // Send a 500 Internal Server Error response along with the error message
+    res.status(500).send(err);
+  }
 });
 
 module.exports = router;
